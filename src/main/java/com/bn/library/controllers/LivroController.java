@@ -34,13 +34,25 @@ public class LivroController {
     }
 
     @GetMapping("/{id}")
-    public Optional<LivroModel> buscarPorId(@PathVariable Long id) {
-        return livroService.buscarPorId(id);
+    public ResponseEntity<LivroModel> buscarPorId(@PathVariable Long id) {
+        Optional<LivroModel> request = livroService.buscarPorId(id);
+
+        if(request.isPresent()) {
+            return ResponseEntity.ok(request.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletarLivro(@PathVariable Long id) {
-        livroService.deletarLivro(id);
-        return ResponseEntity.noContent().build();
+        Optional<LivroModel> request = livroService.buscarPorId(id);
+
+        if (request.isPresent()) {
+            livroService.deletarLivro(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
